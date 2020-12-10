@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/http/webclient.dart';
+import 'package:flutter_app/models/transaction.dart';
 import 'package:flutter_app/screens/contacts_list.dart';
 import 'package:flutter_app/screens/dashboard.dart';
 import 'package:flutter_app/screens/formulario_de_contatos.dart';
@@ -10,7 +11,10 @@ import 'models/contact.dart';
 
 void main() {
   runApp(BytebankApp());
-  findAllTransactions();
+
+  Transaction transacao = Transaction(58800.0, Contact(1,'Ciclano', 4444));
+  saveTransaction(transacao).then((value) => debugPrint('salvou transação...'));
+
  // ContactDao dao = ContactDao(); // colocando a classe ContactDao dentro do objeto contactDao.
   // o objeto representa a classe
 

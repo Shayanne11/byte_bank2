@@ -8,6 +8,11 @@ import 'package:http_interceptor/interceptor_contract.dart';
 import 'package:http_interceptor/models/request_data.dart';
 import 'package:http_interceptor/models/response_data.dart';
 
+
+HttpClientWithInterceptor httpClient = HttpClientWithInterceptor.build(
+  interceptors: [LoggingInterceptor()],
+);
+
 class LoggingInterceptor implements InterceptorContract {
   // interceptores
   @override
@@ -29,9 +34,7 @@ class LoggingInterceptor implements InterceptorContract {
 }
 
 Future<List<Transaction>> findAllTransactions() async {
-  HttpClientWithInterceptor httpClient = HttpClientWithInterceptor.build(
-    interceptors: [LoggingInterceptor()],
-  );
+
 
   Response response =
       await httpClient.get('http://192.168.1.2:8080/transactions').timeout(Duration(seconds: 5));
@@ -58,7 +61,7 @@ Future<List<Transaction>> findAllTransactions() async {
   return transactions;
 }
 
-void saveTransaction(Transaction transaction){
+Future<Transaction>saveTransaction(Transaction transaction)async {
   Map<String,dynamic> transactionMap ={
     'value': transaction.value,
     'contact':{
@@ -68,15 +71,16 @@ void saveTransaction(Transaction transaction){
   };
   String transationJson = jsonEncode(transactionMap);
 
-  Response response = await httpClient.post('http://192.168.1.2:8080/transactions');
+  Response response = await httpClient.post('http://192.168.1.2:8080/transactions', body: transationJson, headers:{
+    'Content-Type': 'application/json',
+    'password' :'1000'
+  });
 
   Map<String, dynamic> responseJson = jsonDecode(response.body);
-  Map<String, dynamic> jsonContact = json[
-  'contact']; //cria uma variavel jsonContact para se referir à contact
+  Map<String, dynamic> jsonContact = responseJson['contact']; //cria uma variavel jsonContact para se referir à contact
   Contact contact = Contact(
       0,
       jsonContact['name'],
-      jsonContact[
-      'accountNumber']); // chama a variavel jsonContact para acessar o name e accoudentro do contact
-
+      jsonContact['accountNumber']); // chama a variavel jsonContact para acessar o name e accoudentro do contact
+  return Transaction(responseJson['value'], contact);
 }

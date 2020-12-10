@@ -19,15 +19,19 @@ class TransactionsList extends StatelessWidget {
           future: findAllTransactions(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
+
               case ConnectionState.none:
                 // TODO: Handle this case.
                 break;
+
               case ConnectionState.waiting:
                 return Progress(mensagem: 'Carregando transações da API REST');
                 break;
+
               case ConnectionState.active:
                 // TODO: Handle this case.
                 break;
+
               case ConnectionState.done:
                 if (snapshot.hasError){
                   return CenteredMessage('Deu Merda', icon: Icons.error,);
